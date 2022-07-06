@@ -46,7 +46,7 @@ The `read` function expects that input is available and that its content matches
 
 ## `scan`
 
-The `scan` function also returns the next token in the input, but may return `None` when the input ends or when its content does not match the requested type. The type of the token (`int`, `float` or `str`) must also be specified.
+The `scan` function also returns the next token in the input, but may return `None` when the input ends or when its content does not match the requested type. The type of the token (`int`, `float` or `str`) must be specified.
 
 For instance, this program reads a sequence of integer numbers and writes their sum:
 
@@ -64,17 +64,45 @@ print(s)
 Consequently, the difference between `read` and `scan` is that the latter returns `None` when input is over or content is not correct, whereas the former fails. In fact, `read` just performs a `scan` and checks it is not `None`.
 
 
+## `tokens`
+
+The `tokens` function provides a way to iterate over all tokens (with a certain type) in the whole input. The type of the tokens (`int`, `float` or `str`) must be specified. The `tokens` function expects that the content of the read tokens match the requested type. Otherwise, it raises an exception just like `read`.
+
+The usual way to use `tokens` is in a main `for` loop. For instance, this program reads a sequence of integer numbers and writes their sum:
+
+```python
+from yogi import tokens
+
+s = 0
+for x in tokens(int):
+    s += x
+print(s)
+```
+
+Calling `read` and `scan` within a loop of `tokens` is possible and may be useful. See, for instance, the next code based on [problem P29448 of Jutge.org](https://jutge.org/problems/P29448_en) (without spoilers):
+
+```python
+from yogi import tokens
+
+for day in tokens(int):
+    month, year = read(int), read(int)
+    if correct_date(day, month, year):
+        print('Correct Date')
+    else:
+        print('Incorrect Date')
+```
+
 ## Tokens
 
-The `read` and `scan` functions return the next token in the input. The type of the token must be given as a parameter: `scan(int)`, `read(int)`, `read(float)`, `scan(float)`, `scan(str)`, `read(str)`.
+The `read` and `scan` functions return the next token in the input. So does `tokens`, which returns all remaining tokens in the input. The type of the token must be given as a parameter: `scan(int)`, `read(int)`, `read(float)`, `scan(float)`, `scan(str)`, `read(str)`.
 
 Tokens are separated by whitespace, so that `read|scan(str)` returns the next single word. Whitespace characters cannot be obtained.
 
 In the event no more tokens are available, `scan` returns `None`, but `read` raises an exception. 
 
-Also, in the event that the current token does not represent a value of the requested type, `scan` returns `None`, but `read` raises an exception. This could happen, for instace, when `read|scan(int)` attempt to read a non integer token.
+Also, in the event that the current token does not represent a value of the requested type, `scan` returns `None`, but `read` and `tokens` raise an exception. This could happen, for instace, when `read|scan|tokens(int)` attempt to read a non integer token.
 
-Besides typing, the important difference between `read` and `scan` and the `input` built-in function is that `read` and `scan` are able to get their tokens among one or more lines, whereas `input` works on just one single line. On the other hand, it is not possible to obtain whitespaces with `read` and `scan`.
+Besides type annotations, the important difference between `read` and `scan` and the `input` built-in function is that `read` and `scan` are able to get their tokens among one or more lines, whereas `input` works on just one single line. On the other hand, it is not possible to obtain whitespaces with `read` and `scan`.
 
 
 ## Typing
@@ -84,6 +112,8 @@ Besides typing, the important difference between `read` and `scan` and the `inpu
 The `read` function returns a value of the same type as requested. For instance, `read(int)` returns an `int`.
 
 The `scan` function returns `None` or a value of the same type as requested. For instance, `scan(int)` returns an `Optional[int]`, that is, a `None` or an `int`.
+
+Each element from the `tokens` iterator returns a value of the same type as requested. For instance, `tokens(int)` return a stream of `int` values.
 
 The next table sumarizes this typing:
 
@@ -95,6 +125,10 @@ read(str)        : str
 scan(int)        : Optional[int]
 scan(float)      : Optional[float]
 scan(str)        : Optional[str]
+
+tokens(int)      : Iterator[int]
+tokens(float)    : Iterator[float]
+tokens(str)      : Iterator[str]
 ```
 
 
@@ -103,11 +137,16 @@ scan(str)        : Optional[str]
 `read(t)`:
 
 - Raises `EOFError` if trying to read past the end of the input.
-- Raises `ValueError` if the read word does not match the type `t`.
+- Raises `ValueError` if the read token does not match the type `t`.
 - Raises `TypeError` if `t` is not `int`, `float` or `str`.
 
 `scan(t)`:
 
+- Raises `TypeError` if `t` is not `int`, `float` or `str`.
+
+`tokens(t)`:
+
+- Raises `ValueError` if the read token does not match the type `t`.
 - Raises `TypeError` if `t` is not `int`, `float` or `str`.
 
 
@@ -120,7 +159,7 @@ When importing the `yogi` package, the maximum depth of the Python interpreter s
 
 ## Version
 
-The variable `yogi.version` contains the version of the package
+The variable `yogi.version` contains the version of the package.
 
 
 # License

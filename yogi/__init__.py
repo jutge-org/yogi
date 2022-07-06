@@ -71,6 +71,16 @@ def scan(t: Type[T]) -> Optional[T]:
             return None
 
 
+def tokens(t: Type[T]) -> Iterator[T]:
+    _check(t)
+    while True:
+        try:
+            token = next(_generator)
+        except StopIteration:
+            break
+        yield t(token)  # might rise ValueError
+
+
 def _check(t: Type[T]) -> Optional[str]:
     """Check that the type t is valid."""
     if t not in [int, float, str]:
