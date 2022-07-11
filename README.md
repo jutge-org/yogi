@@ -82,7 +82,7 @@ print(s)
 Calling `read` and `scan` within a loop of `tokens` is possible and may be useful. See, for instance, the next code based on [problem P29448 of Jutge.org](https://jutge.org/problems/P29448_en) (without spoilers):
 
 ```python
-from yogi import tokens
+from yogi import *
 
 for day in tokens(int):
     month, year = read(int), read(int)
