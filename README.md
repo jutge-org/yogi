@@ -66,7 +66,7 @@ Consequently, the difference between `read` and `scan` is that the latter return
 
 ## `tokens`
 
-The `tokens` function provides a way to write loops that deliver the next token in the input at each iteration, or exit the loop when no more tokens are available. The type of the tokens (`int`, `float` or `str`) must be specified. The `tokens` function expects that the content of the read tokens match the requested type. Otherwise, it raises an exception just like `read`.
+The `tokens` function provides a way to write `for` loops that deliver the next token in the input at each iteration, or exit the loop when no more tokens are available. The type of the tokens (`int`, `float` or `str`) must be specified. The `tokens` function expects that the content of the read tokens match the requested type. Otherwise, it raises an exception just like `read`.
 
 The usual way to use `tokens` is in a main `for` loop. For instance, this program reads a sequence of integer numbers and writes their sum:
 
