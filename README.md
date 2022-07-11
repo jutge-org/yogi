@@ -92,7 +92,7 @@ for day in tokens(int):
         print('Incorrect Date')
 ```
 
-## Tokens
+## What is a token
 
 The `read` and `scan` functions return the next token in the input. So does `tokens`, which returns all remaining tokens in the input. The type of the token must be given as a parameter: `scan(int)`, `read(int)`, `read(float)`, `scan(float)`, `scan(str)`, `read(str)`.
 
