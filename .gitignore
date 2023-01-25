@@ -1,3 +1,4 @@
 build/
 yogi.egg-info/
 yogi/__pycache__/
+dist/
