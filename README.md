@@ -185,12 +185,12 @@ with open('data.txt') as file:
     print(x + y)
 ```
 
-Also, this program adds all numerical values in a string using `io.StringIO`:
+Also, this program adds all numerical values in a string (with two lines) using `io.StringIO`:
 
 ```python
 from yogi import Reader
 
-stream = io.StringIO('10.1 20\t30.3 40.4')
+stream = io.StringIO('10.1 20\n30.3 40.4')
 reader = Reader(stream)
 s = 0.0
 for x in reader.tokens(float):
