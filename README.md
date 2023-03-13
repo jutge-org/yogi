@@ -178,11 +178,11 @@ For instace, this programs adds two numbers in file `data.txt`:
 ```python
 from yogi import Reader
 
-with open('data.txt') as file:
-    reader = Reader(file)
-    x = reader.read(int)
-    y = reader.read(int)
-    print(x + y)
+file = open('data.txt')  # with also possible
+reader = Reader(file)
+x = reader.read(int)
+y = reader.read(int)
+print(x + y)
 ```
 
 Also, this program adds all numerical values in a string (with two lines) using `io.StringIO`:
@@ -198,7 +198,17 @@ for x in reader.tokens(float):
 print(s)
 ```
 
-Naturally, many `Reader` objects can be created and read at the same time.
+Naturally, many `Reader` objects can be created and read at the same time. This program prints the sum of the numbers on each line of a file `numbers.txt`:
+
+```python
+from yogi import Reader
+
+s = 0
+for line in Reader(open('numbers.txt')).lines():
+    for number in Reader(io.StringIO(line)).tokens(int):
+        s += number
+print(s)
+```
 
 
 
