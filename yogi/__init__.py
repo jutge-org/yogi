@@ -18,11 +18,11 @@ Simple typed interface to read input in Python
 """
 
 
-from typing import Optional, TypeVar, Type, Iterator
+from typing import Optional, TypeVar, Type, Iterator, TextIO
 import sys
 
 
-version = '1.3.2'
+version = '1.4.0'
 """package version"""
 
 
@@ -104,5 +104,95 @@ def _token_generator() -> Iterator[str]:
             yield token
 
 
+def lines() -> Iterator[str]:
+    """Generates all the lines of input."""
+    for line in sys.stdin:
+        yield line.rstrip('\n\r')
+
+
 _generator = _token_generator()
 """Generator instance."""
+
+
+class Reader:
+    """Reader object to read from streams (e.g. files)."""
+
+    _generator: Iterator[str]
+    """Generator atribute."""
+
+    _stream: TextIO
+    """The stream to read from."""
+
+    def _check(self, t: Type[T]) -> Optional[str]:
+        """Check that the type t is valid."""
+        if t not in [int, float, str]:
+            raise TypeError
+
+    def _get(self) -> Optional[str]:
+        """Returns the next token in the input or None if eof."""
+
+        try:
+            token = next(self._generator)
+        except StopIteration:
+            return None
+        return token
+
+    def _token_generator(self) -> Iterator[str]:
+        """Generates the tokens in all the lines of stream."""
+        for line in self._stream:
+            for token in iter(line.split()):
+                yield token
+
+    def __init__(self, stream: TextIO) -> None:
+        """Builds a Yogi object to read from stream."""
+        self._stream = stream
+        self._generator = self._token_generator()
+
+    def read(self, t: Type[T]) -> T:
+        """
+        Returns the next token of the input interpreted as having type t.
+
+        Raises EOFError if trying to read past the end of the input.
+        Raises ValueError if the read token does not match the type t.
+        Raises TypeError if t is not int, float or str.
+        """
+
+        self._check(t)
+        token = self._get()
+        if token is None:
+            raise EOFError
+        else:
+            return t(token)  # might rise ValueError
+
+    def scan(self, t: Type[T]) -> Optional[T]:
+        """
+        Returns the next token of the input interpreted as having type t.
+        Returns None when trying to read past the end of the input
+        or if the read token does not match the type t.
+
+        Raises TypeError if t is not int, float or str.
+        """
+
+        self._check(t)
+        token = self._get()
+        if token is None:
+            return None
+        else:
+            try:
+                return t(token)
+            except ValueError:
+                return None
+
+    def tokens(self, t: Type[T]) -> Iterator[T]:
+        self._check(t)
+        while True:
+            try:
+                token = next(self._generator)
+            except StopIteration:
+                break
+            yield t(token)  # might rise ValueError
+
+    def lines(self) -> Iterator[str]:
+        """Generates all the lines of input."""
+        for line in self._stream:
+            yield line.rstrip('\n\r')

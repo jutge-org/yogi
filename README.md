@@ -13,7 +13,7 @@ The `yogi` package offers a simple typed interface to read input in Python. It i
 
 Depending on the system you may have to use `pip` rather than `pip3`.
 
-# Usage
+# Basic usage
 
 ## `read`
 
@@ -104,6 +104,23 @@ Also, in the event that the current token does not represent a value of the requ
 
 Besides type annotations, the important difference between `read` and `scan` and the `input` built-in function is that `read` and `scan` are able to get their tokens among one or more lines, whereas `input` works on just one single line. On the other hand, it is not possible to obtain whitespaces with `read` and `scan`.
 
+## `lines`
+
+The `lines` function provides a way to iterate through all the lines in the input, one line (of type `str`) at a time.
+
+For instance, this program writes the length of each line in the input:
+
+```python
+from yogi import line
+
+for line in lines():
+    print(len(line))
+```
+
+Note that the `\n` and/or `\r` characters at the end of the line are stripped.
+
+Merging calls to `lines()` with calls to `read()`, `scan()` and `tokens()` is not a good idea.
+
 
 ## Typing
 
@@ -129,6 +146,8 @@ scan(str)        : Optional[str]
 tokens(int)      : Iterator[int]
 tokens(float)    : Iterator[float]
 tokens(str)      : Iterator[str]
+
+lines()          : Iterator[str]
 ```
 
 
@@ -148,6 +167,39 @@ tokens(str)      : Iterator[str]
 
 - Raises `ValueError` if the read token does not match the type `t`.
 - Raises `TypeError` if `t` is not `int`, `float` or `str`.
+
+
+# Reader objects
+
+In addition to the global `read`, `scan`, `tokens` and `lines` functions, `yogi` also exposes a `Reader` object that has correponding  `read`, `scan`, `tokens` and `lines` methods. The reader objects must be constructed with a file-like parameter.
+
+For instace, this programs adds two numbers in file `data.txt`:
+
+```python
+from yogi import Reader
+
+with open('data.txt') as file:
+    reader = Reader(file)
+    x = reader.read(int)
+    y = reader.read(int)
+    print(x + y)
+```
+
+Also, this program adds all numerical values in a string using `io.StringIO`:
+
+```python
+from yogi import Reader
+
+stream = io.StringIO('10.1 20\t30.3 40.4')
+reader = Reader(stream)
+s = 0.0
+for x in reader.tokens(float):
+    s += x
+print(s)
+```
+
+Naturally, many `Reader` objects can be created and read at the same time.
+
 
 
 # Extra features
