@@ -188,6 +188,7 @@ print(x + y)
 Also, this program adds all numerical values in a string (with two lines) using `io.StringIO`:
 
 ```python
+import io
 from yogi import Reader
 
 stream = io.StringIO('10.1 20\n30.3 40.4')
@@ -201,6 +202,7 @@ print(s)
 Naturally, many `Reader` objects can be created and read at the same time. This program prints the sum of the numbers on each line of a file `numbers.txt`:
 
 ```python
+import io
 from yogi import Reader
 
 s = 0
