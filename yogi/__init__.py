@@ -81,7 +81,7 @@ def tokens(t: Type[T]) -> Iterator[T]:
         yield t(token)  # might rise ValueError
 
 
-def _check(t: Type[T]) -> Optional[str]:
+def _check(t: Type[T]) -> None:
     """Check that the type t is valid."""
     if t not in [int, float, str]:
         raise TypeError
