@@ -153,8 +153,8 @@ The `yogi` module also provides a `Yogi` class that can be used to read input fr
 ```python
 from yogi import Yogi
 
-with open('input.txt') as f:
-    reader = Yogi(f)
+with open('input.txt') as file:
+    reader = Yogi(file)
     a = reader.read(int)
     b = reader.read(int)
     print(a + b)
