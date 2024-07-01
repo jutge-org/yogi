@@ -18,11 +18,11 @@ Simple typed interface to read input in Python
 """
 
 
-from typing import Optional, TypeVar, Type, Iterator
+from typing import Optional, TypeVar, Type, Iterator, TextIO
 import sys
 
 
-version = '1.3.2'
+version = '2.0.0'
 """package version"""
 
 
@@ -32,6 +32,97 @@ sys.setrecursionlimit(1000000)
 
 # type variable that can represent int, float or str
 T = TypeVar('T', int, float, str)
+
+class Yogi:
+
+    def __init__(self, file: TextIO) -> None:
+        """Constructor of the class Yogi."""
+
+        self._file = file
+        self._generator = self._token_generator()
+
+    def __del__(self) -> None:
+        """Destructor of the class Yogi."""
+
+        self._file.close()
+
+    def read(self, t: Type[T]) -> T:
+        """
+        Returns the next token of the input interpreted as having type t.
+
+        Raises EOFError if trying to read past the end of the input.
+        Raises ValueError if the read token does not match the type t.
+        Raises TypeError if t is not int, float or str.
+        """
+
+        self._check(t)
+        token = self._get()
+        if token is None:
+            raise EOFError
+        else:
+            return t(token)  # might rise ValueError
+
+
+    def scan(self, t: Type[T]) -> Optional[T]:
+        """
+        Returns the next token of the input interpreted as having type t.
+        Returns None when trying to read past the end of the input
+        or if the read token does not match the type t.
+
+        Raises TypeError if t is not int, float or str.
+        """
+
+        self._check(t)
+        token = self._get()
+        if token is None:
+            return None
+        else:
+            try:
+                return t(token)
+            except ValueError:
+                return None
+
+
+    def tokens(self, t: Type[T]) -> Iterator[T]:
+        """Returns an iterator over the tokens of the input."""
+
+        self._check(t)
+        while True:
+            try:
+                token = next(self._generator)
+            except StopIteration:
+                break
+            yield t(token)  # might rise ValueError
+
+
+    def _check(self, t: Type[T]) -> None:
+        """Check that the type t is valid."""
+
+        if t not in [int, float, str]:
+            raise TypeError
+
+
+    def _get(self) -> Optional[str]:
+        """Returns the next token in the input or None if eof."""
+
+        try:
+            token = next(self._generator)
+        except StopIteration:
+            return None
+        return token
+
+
+    def _token_generator(self) -> Iterator[str]:
+        """Generates the tokens in all the lines of input."""
+
+        for line in self._file:
+            for token in iter(line.split()):
+                yield token
+
+
+
+_stdin = Yogi(sys.stdin)
+
 
 
 def read(t: Type[T]) -> T:
@@ -43,12 +134,7 @@ def read(t: Type[T]) -> T:
     Raises TypeError if t is not int, float or str.
     """
 
-    _check(t)
-    token = _get()
-    if token is None:
-        raise EOFError
-    else:
-        return t(token)  # might rise ValueError
+    return _stdin.read(t)
 
 
 def scan(t: Type[T]) -> Optional[T]:
@@ -60,49 +146,10 @@ def scan(t: Type[T]) -> Optional[T]:
     Raises TypeError if t is not int, float or str.
     """
 
-    _check(t)
-    token = _get()
-    if token is None:
-        return None
-    else:
-        try:
-            return t(token)
-        except ValueError:
-            return None
+    return _stdin.scan(t)
 
 
 def tokens(t: Type[T]) -> Iterator[T]:
-    _check(t)
-    while True:
-        try:
-            token = next(_generator)
-        except StopIteration:
-            break
-        yield t(token)  # might rise ValueError
+    """Returns an iterator over the tokens of the input."""
 
-
-def _check(t: Type[T]) -> None:
-    """Check that the type t is valid."""
-    if t not in [int, float, str]:
-        raise TypeError
-
-
-def _get() -> Optional[str]:
-    """Returns the next token in the input or None if eof."""
-
-    try:
-        token = next(_generator)
-    except StopIteration:
-        return None
-    return token
-
-
-def _token_generator() -> Iterator[str]:
-    """Generates the tokens in all the lines of input."""
-    for line in sys.stdin:
-        for token in iter(line.split()):
-            yield token
-
-
-_generator = _token_generator()
-"""Generator instance."""
+    return _stdin.tokens(t)
