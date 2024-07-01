@@ -44,7 +44,7 @@ class Yogi:
     def __del__(self) -> None:
         """Destructor of the class Yogi."""
 
-        self._file.close()
+        pass       # self._file.close()
 
     def read(self, t: Type[T]) -> T:
         """
