@@ -160,7 +160,7 @@ with open('input.txt') as f:
     print(a + b)
 ```
 
-The `Yogi` class has the same methods as the module functions: `read`, `scan` and `tokens`. The `Yogi` class can be used to read from standard input (`sys.stdin`), files, or any other file-like object. In fact, the module functions `read`, `scan` and `tokens` are just shortcuts to the `Yogi` class on `sys.stdin`.
+The `Yogi` class has the same methods as the module functions: `read`, `scan` and `tokens`. The `Yogi` class can be used to read from standard input, files, or any other file-like object. In fact, the module functions `read`, `scan` and `tokens` are just shortcuts to a `Yogi` instance on `sys.stdin`.
 
 ## Recursion limit
 
@@ -178,4 +178,4 @@ Apache License 2.0
 
 - [Jordi Petit](https://github.com/jordi-petit)
 
-© Universitat Politècnica de Catalunya, 2022
+© Universitat Politècnica de Catalunya, 2024
