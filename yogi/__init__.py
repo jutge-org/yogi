@@ -22,7 +22,7 @@ from typing import Optional, TypeVar, Type, Iterator, TextIO
 import sys
 
 
-version = '2.0.0'
+version = '2.0.1'
 """package version"""
 
 
