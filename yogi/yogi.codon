@@ -22,7 +22,7 @@ from typing import Optional
 import sys
 
 
-version = '1.3.2'
+version = '2.0.0'
 version_codon = '1.0.0'
 """package version"""
 
